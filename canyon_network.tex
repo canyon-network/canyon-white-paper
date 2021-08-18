@@ -1,6 +1,6 @@
 \documentclass[]{article}
 
-\title{Canyon: Permanent Storage Layer for Web3.0}
+\title{Canyon: A Permanent Storage Layer for Web3.0}
 \author{
     Liu-Cheng Xu\\
     \\
@@ -86,7 +86,7 @@
 
 \begin{abstract}
 
-Canyon is a permanent storage network built on Substrate, which records the hashes of files on-chain and stores the files off-chain. By blending PoS and a probabilistic proof-of-storage scheme inspired by Arweave, Canyon greatly reduces the barriers to entry for miners, who are incentivized to store as much data as possible for the rewards.
+Canyon is a permanent storage network built on Substrate, which records the hashes of files on-chain and stores the actual files off-chain. By blending PoS and a probabilistic proof-of-storage scheme inspired by Arweave, Canyon greatly reduces the barriers to entry for miners, who are incentivized to store as much data as possible for winning more rewards.
 
 \end{abstract}
 
@@ -119,6 +119,10 @@ Due to the lack of authentic storage needs and system design of Filecoin, the mi
 To solve the problem of decentralized storage verification, Crust\cite{crust} adopts a hardware-based solution Trusted Environment Execution (TEE) to make sure the miners store a specific number of data copies as promised. Each of the storage nodes is required to enroll on Crust chain through TEE before it's allowed to deal with the storage orders from the client. The TEE module of the nodes will periodically check and report whether the files are properly stored in the local storage space in a trusted way.
 
 There are three major TEE providers with different implementations: Software Guard Extensions (SGX) on the Intel platform, Secure Encrypted Virtualization (SEV) on the AMD platform, and TrustZone on the ARM platform. The SGX of Intel is the most widely used TEE platform. Although Crust has a relatively low hardware demand for mining compared with Filecoin, the miners are heavily dependent on a fairly narrow range of hardware that supports TEE, thus being greatly affected by the hardware manufacturers.
+
+% \subsection{Bluzelle}
+
+% Bluzelle claims to be a
 
 \subsection{Arweave}
 
@@ -186,8 +190,7 @@ In Canyon, a PoS-based system, the node is allowed to produce a block only when 
 \end{algorithm}
 \DecMargin{1em}
 
-The steps for generating the storage proof are as follows\footnote{This version is currently based on the initial consensus of Arweave Proof of Access instead of the new one Succinct Proofs of Random Access. The most noticeable change in SPoRA upgrade is that the miners now have to compute a slow hash to locate the random recall byte, rendering those who request data from the remote storage pool at a distinct disadvantage. To put it simply, $\Call{MultiHash}{S, x}$ in \ref{algo:poa}{ Algo 1} is replaced with randomx hash, and the \texttt{mod} operation is replaced with searching in a limited search space.}:
-
+The steps for generating the storage proof are as follows:
 \begin{enumerate}
     \item Input the value of \code{parent\_hash} ($S$) and \code{weave\_size} ($W$) respectively. And the repeats $x$, hereinafter called \code{depth}, is initialized to 1.
   \item Compute \code{recall\_byte}, i.e., a random byte in the network-wide data history ranging from 0 to \code{weave\_size}, excluding \code{weave\_size}.
@@ -199,7 +202,7 @@ The steps for generating the storage proof are as follows\footnote{This version 
 
 As you can see, if a node stores 100\% of data, the value of \code{depth} always remains 1. The node only needs to go through the above steps once every time when it attempts to generate a \code{poa} proof. If the node stores 50\% of data, the value of \code{depth} is expected to approach 2 as it produces enough blocks. If the node stores 10\% of data, the value of \code{depth} approaches 10.
 
-If a node produces a total of $N$ blocks, and the poa.depth of each block is $depth_{i\in 1,2,...,N}$, the average \code{depth} value of the $N$ blocks $\hat{x}$ is:
+If a node produces a total of $N$ blocks, and the \texttt{poa.depth} of each block is $x_{i\in 1,2,...,N}$, the average \code{depth} value of the $N$ blocks $\hat{x}$ is:
 
 $$
 \hat{x} = \frac{1}{N} {\sum_{i=1}^N x_i}
@@ -218,6 +221,8 @@ With the knowledge of the storage capacity of nodes $R$, we can incentivize the 
 \subsubsubsection{Validator Election}
 
 The validators on Canyon network have two responsibilities: author blocks as a virtual miner and provide unstoppable storage services. Given the security of a PoS system is rooted in the number of tokens locked in the staking pool, both the validators and stakers should be obviously rewarded for the contribution to the security of consensus. Additionally, the value of Canyon network in essence is the high availablity in the perpetual storage service served by the whole validator set. The validators who win more stakes and provide superior storage services with larger storage capacity will gain a great advantage in the staking election.
+
+There is a minimum storage ratio constraint for each validator. Once the calculated storage ratio on chain of a validator is lower than its claimed minimum value, the reward for the particular validator will be deducted and even be slashed if it's extremely lower for not contributing enough storage resources as promised.
 
 \subsubsubsection{Staking Rewards}
 
@@ -265,6 +270,51 @@ ethereum/wiki/wiki/White-Paper}, 2014.
 
 \appendix
 \section{Appendix}
+
+\subsection{SPoRA}
+
+\IncMargin{1em}
+\begin{algorithm}
+    \label{algo:spora}
+
+    \SetAlgoNoLine
+    \SetKwInOut{Input}{\textbf{Input}}\SetKwInOut{Output}{\textbf{Output}}
+
+    \Input{
+        \\
+        The count of search subspaces $N$\;\\
+        The random seed $S$\;\\
+        The weave size $W$\;\\}
+    \Output{
+        \\
+        The proof of accessing the recall block $POA$\;\\}
+    \BlankLine
+
+    Initialize the number of repeats $x$ with 1\;
+    \BlankLine
+
+    \Repeat
+        {\text{The data of TX is available}}
+        {
+        $H0 \leftarrow \Call{RandomX}{S, x}$\;
+        $W_{search} \leftarrow H0 \mod N$\;
+        Draw a random byte $B$ from the limited search subspace $W_{search}$\;
+        Find the $TX$ in which the random byte $B$ is included\;
+        {$x \leftarrow x + 1$}\;
+    }
+
+    \BlankLine
+    $POA \leftarrow \Call{ConstructPOA}{TX}$\;
+    \Return $POA$\;
+    \caption{Generation of SPoRA}
+\end{algorithm}
+\DecMargin{1em}
+
+Succinct Proofs of Random Access(SPoRA) is a new type of consensus deployed by Arweave with an intention of resolving the observed storage and computation pool issue with the PoA consensus \footnote{\url{https://arweave.medium.com/the-arweave-network-is-now-running-succinct-random-proofs-of-access-spora-e2732cbcbb46}}.
+
+SPoRA requires the miners to compute a slow $\Call{RandomX}{S, x}$ instead of $\Call{MultiHash}{S, x}$ used in \ref{algo:poa}{ Algo 1}, reducing the number of trials allowed for finding the recall block in context of the average block time of a PoW chain. In another word, an Arweave miner won't gain much more mining advantages with more computing powers. Canyon might not adopt this change as it's a PoS system.
+
+In addition, the \texttt{mod} operation for locating the random recall byte in \ref{algo:poa}{ Algo 1} is replaced by searching in a limited search space. The entire weave is divided into $N$ equal parts, the random recall byte locating will be constrainted to be performed in only one part of them $W_{search}$.
 
 \subsection{Data Structure}
 
