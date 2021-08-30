@@ -16,6 +16,9 @@
 \usepackage[a4paper]{geometry}
 \usepackage[linesnumbered,boxed,ruled,commentsnumbered]{algorithm2e}
 \usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfigure}
 \usepackage{hyperref}
 \usepackage[firstpage]{draftwatermark}
 \SetWatermarkLightness{0.4}
@@ -222,7 +225,26 @@ With the knowledge of the storage capacity of nodes $R$, we can incentivize the 
 
 The validators on Canyon network have two responsibilities: author blocks as a virtual miner and provide unstoppable storage services. Given the security of a PoS system is rooted in the number of tokens locked in the staking pool, both the validators and stakers should be obviously rewarded for the contribution to the security of consensus. Additionally, the value of Canyon network in essence is the high availablity in the perpetual storage service served by the whole validator set. The validators who win more stakes and provide superior storage services with larger storage capacity will gain a great advantage in the staking election.
 
-There is a minimum storage ratio constraint for each validator. Once the calculated storage ratio on chain of a validator is lower than its claimed minimum value, the reward for the particular validator will be deducted and even be slashed if it's extremely lower for not contributing enough storage resources as promised. The storage ratio of a validator will be converted into a virtual stake and considered in the validator election process. The minimum storage ratio will be adjusted according to the number of total validators and the size of entire weave. At the early stage of network, the weave is so small that all the validators can afford the storage cost for storing the entire weave locally, hence the minimum storage ratio will be pretty high. With the weave becoming larger and reaching to the EiB level, the minimum storage ration of each validator will be decreased to less than 1\% in the case of Filecoin data distribution.
+There is a minimal storage ratio constraint for each validator. Once the calculated storage ratio on chain of a validator is lower than its claimed minimum value, the reward for the particular validator will be deducted and even be slashed if it's extremely lower for not contributing enough storage resources as promised. The storage ratio of a validator will be converted into a virtual stake and considered in the validator election process. The minimum storage ratio will be adjusted according to the number of total validators and the size of entire weave. At the early stage of network, the weave is so small that all the validators can afford the storage cost for storing the entire weave locally, hence the minimum storage ratio will be pretty high. With the weave becoming larger and reaching to the EiB level, the minimum storage ration of each validator will be decreased to less than 1\% in the case of Filecoin data distribution.
+
+\subsubsubsection{Data Durability}
+
+From the view of the traditional cloud storage providers, the data durability means the ability to keep the stored data consistent, intact without the influence of bit rot, drive failures, or any form of corruption, expressed as an annual percentage in nines, as in two nines before the decimal point and as many nines as warranted after the decimal point. For example, eleven nines of durability is expressed as 99.999999999\%. What this means is that the storage vendor is promising that your data will remain intact while it is under their care without losing any more than 0.000000001 percent of your data in a year (in the case of eleven nines annual durability)\cite{storagedurability}.
+
+Of the major vendors, Azure claims 12 nines and even 16 nines durability for some services, while Amazon S3, Google Cloud Platform, and others claim 11 nines, or 99.999999999\% annual durability.
+
+As a permanent storage network, the minimal storage ratio of each validator inherently guarantees a high data durability. Assuming the minimal storage ratio for each validator is $x$, the number of total validators in the network is $y$, the probability that some file has been uploaded but somehow actually not stored by any validator due to various reasons, in another word, the file is unfortunately missing now, is $P_{missing}$:
+
+$$
+P_{missing} = (1-x)^y
+$$
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth]{P_data_missing}
+  \caption{12 nines of data durability($P_{missing} = 0.0000000001$)}
+\label{Fig.P_data_missing}
+\end{figure}
 
 \subsubsubsection{Staking Rewards}
 
@@ -264,6 +286,7 @@ Canyon network is designed to be a permanent decentralized storage network, putt
 \bibitem{substrate}Substrate: The platform for blockchain innovators. \url{https://github.com/paritytech/substrate}
 \bibitem{bitcoin}Satoshi Nakamoto. Bitcoin: A peer-to-peer electronic cash system. \url{https://www.bitcoin.org/bitcoin.pdf}, 2008.
 \bibitem{gav2014web3}Gavin Wood. “ĐApps: What Web 3.0 Looks Like”. \url{https://gavwood.com/dappsweb3.html}, 2014.
+\bibitem{storagedurability}\url{https://www.backblaze.com/blog/cloud-storage-durability-vs-availability/}
 \bibitem{ethereum}Vitalik Buterin. A next-generation smart contract and decentralized application platform. \url{https://github.com/
 ethereum/wiki/wiki/White-Paper}, 2014.
 \end{thebibliography}
