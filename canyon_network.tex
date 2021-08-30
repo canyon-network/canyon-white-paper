@@ -16,6 +16,9 @@
 \usepackage[a4paper]{geometry}
 \usepackage[linesnumbered,boxed,ruled,commentsnumbered]{algorithm2e}
 \usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfigure}
 \usepackage{hyperref}
 \usepackage[firstpage]{draftwatermark}
 \SetWatermarkLightness{0.4}
@@ -222,7 +225,27 @@ With the knowledge of the storage capacity of nodes $R$, we can incentivize the 
 
 The validators on Canyon network have two responsibilities: author blocks as a virtual miner and provide unstoppable storage services. Given the security of a PoS system is rooted in the number of tokens locked in the staking pool, both the validators and stakers should be obviously rewarded for the contribution to the security of consensus. Additionally, the value of Canyon network in essence is the high availablity in the perpetual storage service served by the whole validator set. The validators who win more stakes and provide superior storage services with larger storage capacity will gain a great advantage in the staking election.
 
-There is a minimum storage ratio constraint for each validator. Once the calculated storage ratio on chain of a validator is lower than its claimed minimum value, the reward for the particular validator will be deducted and even be slashed if it's extremely lower for not contributing enough storage resources as promised. The storage ratio of a validator will be converted into a virtual stake and considered in the validator election process. The minimum storage ratio will be adjusted according to the number of total validators and the size of entire weave. At the early stage of network, the weave is so small that all the validators can afford the storage cost for storing the entire weave locally, hence the minimum storage ratio will be pretty high. With the weave becoming larger and reaching to the EiB level, the minimum storage ration of each validator will be decreased to less than 1\% in the case of Filecoin data distribution.
+There is a minimal storage ratio constraint for each validator. Once the calculated storage ratio on chain of a validator is lower than its claimed minimum value, the reward for the particular validator will be deducted and even be slashed if it's extremely lower for not contributing enough storage resources as promised. The storage ratio of a validator will be converted into a virtual stake and considered in the validator election process. The minimum storage ratio will be adjusted according to the number of total validators and the size of entire weave. At the early stage of network, the weave is so small that all the validators can afford the storage cost for storing the entire weave locally, hence the minimum storage ratio will be pretty high. With the weave becoming larger and reaching to the EiB level, the minimum storage ration of each validator will be decreased to less than 1\% in the case of Filecoin data distribution.
+
+% 假设每个验证人的最低存储比例为 R, 那么某个文件不被存储的概率为 1 - R, 全网共有 N 个验证人，全网没有任何一个验证人存储该数据的概率, 也就是数据在网络中丢失的概率为 P：
+
+$$(1-R)^{N} \le P, where R \in [0, 1].$$
+
+假设
+
+$$(1-x)^{y} = P$$
+
+$$y = \log_{1-x}P$$
+
+\begin{figure}[H]
+\centering  %图片全局居中
+\subfigure{
+  \label{Fig.sub.1}
+  \includegraphics[width=0.65\textwidth]{P_data_missing}
+}
+\caption{When the probability of data missing is 0.0000000001}
+\label{Fig.P_data_missing}
+\end{figure}
 
 \subsubsubsection{Staking Rewards}
 
