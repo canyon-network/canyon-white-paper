@@ -229,21 +229,22 @@ There is a minimal storage ratio constraint for each validator. Once the calcula
 
 % 假设每个验证人的最低存储比例为 R, 那么某个文件不被存储的概率为 1 - R, 全网共有 N 个验证人，全网没有任何一个验证人存储该数据的概率, 也就是数据在网络中丢失的概率为 P：
 
-$$(1-R)^{N} \le P, where R \in [0, 1].$$
+\subsubsubsection{Data Durability}
 
-假设
+From the view of the traditional cloud storage providers, the data durability means the ability to keep the stored data consistent, intact without the influence of bit rot, drive failures, or any form of corruption, expressed as an annual percentage in nines, as in two nines before the decimal point and as many nines as warranted after the decimal point. For example, eleven nines of durability is expressed as 99.999999999\%. What this means is that the storage vendor is promising that your data will remain intact while it is under their care without losing any more than 0.000000001 percent of your data in a year (in the case of eleven nines annual durability)\cite{storagedurability}.
 
-$$(1-x)^{y} = P$$
+Of the major vendors, Azure claims 12 nines and even 16 nines durability for some services, while Amazon S3, Google Cloud Platform, and others claim 11 nines, or 99.999999999\% annual durability.
 
-$$y = \log_{1-x}P$$
+As a permanent storage network, the minimal storage ratio of each validator inherently guarantees a high data durability. Assuming the minimal storage ratio for each validator is $x$, the number of total validators in the network is $y$, the probability that some file has been uploaded but somehow actually not stored by any validator due to various reasons, in another word, the file is unfortunately missing now, is $P_{missing}$:
+
+$$
+P_{missing} = (1-x)^y
+$$
 
 \begin{figure}[H]
-\centering  %图片全局居中
-\subfigure{
-  \label{Fig.sub.1}
-  \includegraphics[width=0.65\textwidth]{P_data_missing}
-}
-\caption{When the probability of data missing is 0.0000000001}
+\centering
+\includegraphics[width=0.65\textwidth]{P_data_missing}
+\caption{12 nines of data durability}
 \label{Fig.P_data_missing}
 \end{figure}
 
@@ -287,6 +288,7 @@ Canyon network is designed to be a permanent decentralized storage network, putt
 \bibitem{substrate}Substrate: The platform for blockchain innovators. \url{https://github.com/paritytech/substrate}
 \bibitem{bitcoin}Satoshi Nakamoto. Bitcoin: A peer-to-peer electronic cash system. \url{https://www.bitcoin.org/bitcoin.pdf}, 2008.
 \bibitem{gav2014web3}Gavin Wood. “ĐApps: What Web 3.0 Looks Like”. \url{https://gavwood.com/dappsweb3.html}, 2014.
+\bibitem{storagedurability}\url{https://www.backblaze.com/blog/cloud-storage-durability-vs-availability/}
 \bibitem{ethereum}Vitalik Buterin. A next-generation smart contract and decentralized application platform. \url{https://github.com/
 ethereum/wiki/wiki/White-Paper}, 2014.
 \end{thebibliography}
