@@ -89,7 +89,7 @@
 
 \begin{abstract}
 
-Canyon is a permanent storage network built on Substrate, which records the hashes of files on-chain and stores the actual files off-chain. By blending PoS and a probabilistic proof-of-storage scheme inspired by Arweave, Canyon greatly reduces the barriers to entry for miners, who are incentivized to store as much data as possible for winning more rewards.
+Canyon is a permanent storage network built on Substrate, which records the hashes of files on-chain and stores the actual files off-chain. By blending PoS and a probabilistic proof-of-storage scheme inspired by Arweave, Canyon is able to pledge a pretty high data durability in theory and greatly reduces the barriers to entry for storage miners who are incentivized to store as much data as possible for winning more rewards, rendering Canyon Network a highly sustainable decentralized storage platform .
 
 \end{abstract}
 
@@ -246,6 +246,10 @@ $$
 \label{Fig.P_data_missing}
 \end{figure}
 
+\subsubsubsection{Data Redundancy}
+
+The redundancy means the act of duplicating the data. Although the high data durability ensures the data loss happens in a pretty low chance, there is no guarantee about the number of data copies that actually exist in the network, for PoA is an incentive-driven approach and does not specify an exact number of redundant copies that should be provided. To put it simply, the system can only promise there is at least one copy for a given piece of data in the network and nothing else. The data redundancy is not a trivial issue, Canyon does not resolve it using a hard way but using a market-leading means with a principle that client should pay for reading data. Client has to pay some fee for reading data due to the bandwidth cost, hence the validators are motivated to store the data that are read frequently because they can earn some money by providing the read service except the basic storage service. In another word, the data with a frequent read need will obviously have more copies, the data that is rarely read will have less copies, but no data will be lost even it is never read by anyone after stored to the network.
+
 \subsubsubsection{Staking Rewards}
 
 The reward for a miner producing a block is composed of three parts:
@@ -276,7 +280,7 @@ An inherent advantage of Canyon is the easier interoperability with the Polkadot
 
 \section{Conclusion}
 
-Canyon network is designed to be a permanent decentralized storage network, putting the emphasis on both lightweight storage consensus and highly-available data retrieval. Being a permanent storage layer, Canyon is better suited for the storage-based computation paradigm.
+Canyon network is designed to be a permanent decentralized storage network, putting the emphasis on both lightweight storage consensus and highly-available data retrieval. Being a permanent storage layer, Canyon is better suited for the storage-based computation paradigm. Canyon guarantees a high data durability by enforcing an adaptive minimal storage ratio constraint for each validator based on the total number of validators. The solution for the data redundancy is a retrieval-driven approach relying on the retrieval market itself.
 
 \begin{thebibliography}{99}
 \bibitem{filecoin}Protocol Labs, Filecoin: A Decentralized Storage Network, \url{https://filecoin.io/filecoin.pdf}.
